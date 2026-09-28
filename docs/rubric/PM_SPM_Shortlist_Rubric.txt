@@ -1,0 +1,160 @@
+KARGO — PM / SENIOR PM SHORTLISTING RUBRIC
+=============================================
+Purpose: Score all 60 applicants (both roles) on 5 metrics. Metrics are
+mutually exclusive (each piece of resume evidence maps to exactly one
+metric) and collectively exhaustive (together they cover everything
+that distinguished Kargo's "Exceeds Expectations" hires from "Meets"
+and "Below", plus everything the two JDs explicitly ask for).
+
+Source: Built from the 8 past-hire profiles (5 Exceeds, 2 Meets, 1
+Below) and the PM / Senior PM job descriptions.
+
+Scoring: Each metric scored 1-4. Same 5 metrics apply to both roles;
+what counts as a "4" differs by seniority level where noted. Total
+score = sum of all 5 (max 20). No metric is optional — a candidate
+who scores 0 evidence on a metric gets a 1, not a blank.
+
+---------------------------------------------------------------------
+METRIC 1: GROUND-LEVEL DOMAIN GROUNDING (logistics/freight/ops reality)
+---------------------------------------------------------------------
+Definition: Direct, hands-on exposure to how freight forwarding, ports,
+customs, or physical operations actually run — not just having sold
+or built software adjacent to them.
+
+Why it matters: Present in all 5 "Exceeds" hires (ex-CHA ops exec,
+freight documentation, port services sales, freight forwarding client
+relations, supply chain/carrier ops) and absent in all 3 non-Exceeds
+hires. The JD only names this as a plus for the Senior PM role — the
+pattern shows it predicts performance for PM too.
+
+Scoring:
+  1 — No logistics/ops/supply-chain exposure anywhere in career.
+  2 — Sold or built software for logistics clients, but no hands-on
+      operational role.
+  3 — Held an operational role in an adjacent domain (e.g. general
+      supply chain, e-commerce fulfilment) but not freight/customs/port.
+  4 — Held a hands-on operational role directly in freight forwarding,
+      customs, port operations, or carrier logistics.
+
+---------------------------------------------------------------------
+METRIC 2: SELF-INITIATED OWNERSHIP (built/fixed the unasked-for thing)
+---------------------------------------------------------------------
+Definition: A specific, dated instance of the candidate identifying a
+problem nobody assigned them and building or fixing it anyway, under
+real constraint (time pressure, no headcount, no mandate) — and it
+got adopted by others afterward.
+
+Why it matters: Every Exceeds hire has one concrete instance of this
+(a tool built overnight, a workflow redesigned over a weekend, a bug
+report nobody asked them to write). It is initiative that precedes
+and exceeds the job description, not initiative described in general
+terms ("proactive," "self-starter").
+
+Scoring:
+  1 — No specific instance found; only generic self-description
+      ("proactive," "self-starter") with no concrete example.
+  2 — One instance of solving an assigned problem well, but it was
+      requested/expected, not self-initiated.
+  3 — One self-initiated fix/build, but adoption/impact unclear or
+      limited to the candidate's own work.
+  4 — One or more dated, specific instances of building/fixing
+      something unprompted, under real constraint, that was adopted
+      by a team or became standard practice.
+
+---------------------------------------------------------------------
+METRIC 3: DECISION AUTONOMY TRACK RECORD (no senior layer catching errors)
+---------------------------------------------------------------------
+Definition: Evidence the candidate's decisions were final in practice —
+they were the last checkpoint, not one voice feeding into someone
+senior who made the actual call.
+
+Why it matters: Distinct from Metric 2 (which is about initiative/
+action). This is about accountability structure — every Exceeds hire
+explicitly operated without a layer above absorbing their mistakes
+("no escalation to management," "sole PM," "most senior engineer in
+the room," "no account manager layer"). Both JDs state this directly
+for Kargo itself ("no committee that approves product decisions").
+
+Scoring:
+  1 — Always operated inside a structured team with a senior owner
+      making final calls (e.g. large PM team with templates, layered
+      approvals).
+  2 — Contributed to decisions but shared final accountability with a
+      manager or peer group.
+  3 — Owned a defined area independently, with informal/occasional
+      escalation to a manager.
+  4 — Explicitly the final decision-maker in their area for an
+      extended period, with stated evidence of no escalation layer
+      (sole owner, no account manager, no committee).
+
+---------------------------------------------------------------------
+METRIC 4: ROLE-CALIBRATED PRODUCT CRAFT (JD-specific competency)
+---------------------------------------------------------------------
+Definition: The explicit, named skill each JD asks for — this is the
+one metric where the bar differs by role.
+
+  For PM applicants, look for: discovery work with real users, shipped
+  features with adoption evidence, and — critically — features KILLED
+  based on data, not just shipped. Comfort working without a PM
+  handbook, sprint template, or design system already in place.
+
+  For Senior PM applicants, look for: ownership of integration/
+  architecture-level decisions (what to build vs. configure vs. avoid),
+  reliability/data-quality accountability, and evidence of shaping how
+  a product function works (frameworks, standards, practices for
+  others) — not just running one.
+
+Scoring (apply the PM bar to PM applicants, SPM bar to SPM applicants):
+  1 — No evidence of discovery, shipping, or prioritization judgment;
+      purely execution/delivery of specs handed to them.
+  2 — Shipped features with defined process support (existing templates,
+      structured discovery, PM team backing) — competent but not
+      built for ambiguity.
+  3 — Shipped AND killed at least one feature/initiative based on data
+      or user evidence, in a reasonably structured environment.
+  4 — Shipped, killed, and can point to a specific higher-stakes call
+      made in an unstructured environment (PM: 0-to-1 process
+      creation; SPM: integration/architecture trade-off with
+      multi-year consequences) that others now rely on.
+
+---------------------------------------------------------------------
+METRIC 5: SCALE-APPROPRIATE EXPERIENCE & COMPLEXITY HANDLED
+---------------------------------------------------------------------
+Definition: Whether the candidate's years of experience and the
+complexity of what they've managed actually match the seniority level
+of the role — separate from what they did (Metric 4) or how
+autonomously they did it (Metric 3).
+
+  PM target: 2-4 years of PM experience; ideally at a company building
+  a product/function for the first time.
+  Senior PM target: 5-8 years of PM experience; ideally including
+  platform products, integration layers, or complex technical
+  environments, and some early-stage-company exposure.
+
+Scoring:
+  1 — Experience level clearly mismatched to the role applied for
+      (over- or under-qualified relative to the band), or complexity
+      of systems/orgs managed is materially below what the role needs.
+  2 — Close to the experience band but complexity handled is
+      lower than the role demands (e.g. SPM applicant with no
+      integration/platform exposure).
+  3 — Squarely within the experience band with complexity roughly
+      matched to the role.
+  4 — Within (or slightly beyond, without being a flight risk for
+      being over-levelled) the experience band, with complexity
+      handled that meets or exceeds what the role demands.
+
+---------------------------------------------------------------------
+HOW TO USE
+---------------------------------------------------------------------
+1. Score every applicant 1-4 on all 5 metrics using only what's in
+   their CV — don't infer beyond stated evidence.
+2. Total score out of 20. Use total to rank within each role (PM pool
+   ranked separately from SPM pool — do not compare across roles).
+3. Flag any applicant scoring 4 on Metrics 1-3 (domain + initiative +
+   autonomy) but low on Metric 5 (experience/scale) — these are
+   possible "hidden fit" candidates the job spec alone would filter
+   out, similar to how Kargo's own past hires were selected.
+4. Flag any applicant scoring high on Metric 4-5 (on-paper role fit)
+   but low on Metrics 1-3 — these look like Vikram/Rahul Bose/Preetham:
+   spec-matched but may land as "Meets" rather than "Exceeds."
