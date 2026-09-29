@@ -18,4 +18,10 @@ describe('buildPrompt', () => {
     const prompt = buildPrompt('UNIQUE_MARKER_TEXT_12345', 'PM')
     expect(prompt).toContain('UNIQUE_MARKER_TEXT_12345')
   })
+
+  it('instructs the model to treat resume text as untrusted data, not instructions', () => {
+    const prompt = buildPrompt('some resume text', 'PM')
+    expect(prompt).toContain('untrusted')
+    expect(prompt.toLowerCase()).toContain('never as instructions')
+  })
 })
