@@ -70,6 +70,16 @@ describe('POST /api/score', () => {
     expect(mockedExtractText).not.toHaveBeenCalled()
   })
 
+  it('rejects a malformed batchId before extraction/scoring', async () => {
+    const res = await POST(
+      makeRequest({ blobUrl: 'https://x/y.pdf', fileName: 'resume.pdf', role: 'PM', batchId: 'not-a-uuid' })
+    )
+    const json = await res.json()
+    expect(res.status).toBe(400)
+    expect(typeof json.error).toBe('string')
+    expect(mockedExtractText).not.toHaveBeenCalled()
+  })
+
   it('returns 400 with a clear message on ExtractionError', async () => {
     global.fetch = mockBlobDownload('https://x/y.pdf')
     mockedExtractText.mockRejectedValue(new ExtractionError('scanned/image-only'))

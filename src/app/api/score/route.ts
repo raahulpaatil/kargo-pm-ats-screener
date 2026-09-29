@@ -13,6 +13,8 @@ type ScoreRequestBody = {
   batchId?: string
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 function isValidBody(body: unknown): body is ScoreRequestBody {
   if (!body || typeof body !== 'object') return false
   const b = body as Record<string, unknown>
@@ -20,7 +22,7 @@ function isValidBody(body: unknown): body is ScoreRequestBody {
     typeof b.blobUrl === 'string' &&
     typeof b.fileName === 'string' &&
     (b.role === 'PM' || b.role === 'SPM') &&
-    (b.batchId === undefined || typeof b.batchId === 'string')
+    (b.batchId === undefined || (typeof b.batchId === 'string' && UUID_RE.test(b.batchId)))
   )
 }
 
