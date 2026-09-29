@@ -66,10 +66,24 @@ async function callOnce(client: GoogleGenAI, prompt: string): Promise<GeminiScor
       },
     })
     const text = response.text
-    if (!text) return null
-    const data = JSON.parse(text)
-    return isValidResult(data) ? data : null
-  } catch {
+    if (!text) {
+      console.error('[gemini] callOnce: response had no text content', { response })
+      return null
+    }
+    let data: unknown
+    try {
+      data = JSON.parse(text)
+    } catch (parseErr) {
+      console.error('[gemini] callOnce: response text was not valid JSON', { text, parseErr })
+      return null
+    }
+    if (!isValidResult(data)) {
+      console.error('[gemini] callOnce: response JSON failed schema/range validation', { data })
+      return null
+    }
+    return data
+  } catch (err) {
+    console.error('[gemini] callOnce: the Gemini SDK call itself threw', err)
     return null
   }
 }
