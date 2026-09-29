@@ -16,7 +16,10 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
         <p className="text-subtle mb-6">{candidate.role === 'PM' ? 'Product Manager' : 'Senior Product Manager'}</p>
         <ScoreRing score={candidate.score.total100} />
         <div className="mt-6">
-          <StatusButtons candidateId={candidate.id} initialStatus={candidate.status} />
+          <StatusButtons
+            candidate={{ id: candidate.id, name: candidate.name, email: candidate.email, role: candidate.role }}
+            initialStatus={candidate.status}
+          />
         </div>
         {(candidate.score.flagHiddenFit || candidate.score.flagSpecShallow) && (
           <div className="mt-6 flex gap-2">
