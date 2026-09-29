@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCandidateWithScore, updateCandidateStatus } from '@/lib/candidates'
 import { buildDecisionEmail } from '@/lib/email-templates'
-import { sendDecisionEmail, ResendSendError } from '@/lib/resend'
+import { sendDecisionEmail, MailSendError } from '@/lib/mailer'
 import type { CandidateStatus } from '@/lib/types'
 
 const SENDABLE_STATUSES: CandidateStatus[] = ['accepted', 'rejected']
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     await sendDecisionEmail(email)
   } catch (err) {
-    if (err instanceof ResendSendError) {
+    if (err instanceof MailSendError) {
       return NextResponse.json({ error: `Failed to send email: ${err.message}` }, { status: 502 })
     }
     throw err

@@ -2,12 +2,9 @@ import type { Role } from '@/lib/rubric'
 
 export type DecisionEmailContent = {
   to: string
-  from: string
   subject: string
   body: string
 }
-
-export const DECISION_EMAIL_FROM = 'Kargo Hiring <onboarding@resend.dev>'
 
 const ROLE_LABEL: Record<Role, string> = {
   PM: 'Product Manager',
@@ -29,5 +26,5 @@ export function buildDecisionEmail(
       ? `${greeting},\n\nThank you for applying for the ${roleLabel} role at Kargo. We were impressed by your background and would like to move forward with your application.\n\nSomeone from our hiring team will be in touch shortly with next steps.\n\nBest,\nKargo Hiring Team`
       : `${greeting},\n\nThank you for taking the time to apply for the ${roleLabel} role at Kargo, and for sharing your background with us.\n\nAfter careful consideration, we've decided not to move forward with your application at this time. We appreciate your interest in Kargo and wish you the best in your search.\n\nBest,\nKargo Hiring Team`
 
-  return { to: candidateEmail, from: DECISION_EMAIL_FROM, subject, body }
+  return { to: candidateEmail, subject, body }
 }

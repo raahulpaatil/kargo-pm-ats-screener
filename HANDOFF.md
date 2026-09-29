@@ -20,7 +20,7 @@ extracts text, scores it against a 5-metric rubric via Gemini (structured
 JSON output), computes a 0-100 score plus two "flag" signals, stores results
 in Neon Postgres with the original file in Vercel Blob, and shows either a
 single-candidate report or a ranked batch table. Single shared-password
-gate. As of today it also sends Accept/Reject decision emails via Resend.
+gate. As of today it also sends Accept/Reject decision emails from the owner's Gmail.
 
 **Source docs in the repo** (read these for full detail, this file is just
 the fast-orientation layer):
@@ -32,7 +32,7 @@ the fast-orientation layer):
 
 Next.js 16 (App Router, Turbopack), Tailwind CSS v4, Neon Postgres
 (`@neondatabase/serverless`), Gemini API (`gemini-3.8-flash`), Vercel Blob
-(private access + authenticated reads), Resend (transactional email),
+(private access + authenticated reads), Gmail SMTP via nodemailer (decision emails),
 Vitest. Deployed on Vercel.
 
 ## Environment variables needed (`.env.local`, never committed)
@@ -43,7 +43,8 @@ DATABASE_URL=postgresql://neondb_owner:npg_IP0YNioyM9lk@ep-soft-sea-b39qnt9y-poo
 BLOB_READ_WRITE_TOKEN=vercel_blob_rw_W8qu3rUhKqUYtU2x_19G9HmBRbhIxVBz0U7ex5c1K5Gg2I2
 APP_PASSWORD=123456
 SESSION_SECRET=98f93e5ee1624818c89cf20a5aeb8442cd0935eed8f9d4144b9785ce67ccb8ea
-RESEND_API_KEY=re_SN3iSYwg_NVmtniFPqbkp6hMqMnb4LxjJ
+GMAIL_USER=<your gmail address>
+GMAIL_APP_PASSWORD=<16-char Google App Password>
 ```
 
 `APP_PASSWORD=123456` is still a placeholder — worth changing before wider use.
@@ -180,3 +181,10 @@ Blob API — not mocked, by design, given the project's scale.
 5. Do a full real-world pass with Arjun: upload a batch of real resumes,
    confirm scores look sane against the rubric, try Accept/Reject once a
    domain is verified.
+
+
+## Update: Gmail sending + redesign
+
+- Decision emails now send through Gmail SMTP (`src/lib/mailer.ts`, nodemailer). Needs `GMAIL_USER` and `GMAIL_APP_PASSWORD` (Google Account → Security → 2-Step Verification → App passwords) in `.env.local` **and** in Vercel Production env vars, then redeploy. Resend was removed, so the older Resend next steps above no longer apply.
+- UI moved to theme tokens in `src/app/globals.css` (dark default, light toggle). Score verdict bands (Shortlist ≥75, Maybe 50–74, Pass <50; Hidden Fit lifts Pass to Maybe) live in `src/lib/verdict.ts` and are a UI suggestion, not part of the rubric.
+- Candidate page has prev/next, a sticky Accept/Reject bar, and auto-advance to the next pending candidate; every page has a ✕ close button.

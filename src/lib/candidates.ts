@@ -85,3 +85,20 @@ export async function getBatchCandidates(
     spm: all.filter((c) => c.role === 'SPM'),
   }
 }
+
+export type QueueEntry = { id: string; status: CandidateStatus }
+
+// Review order used for prev/next: a batch by score, otherwise everyone with
+// pending candidates first. AllCandidatesTable's default sort mirrors this.
+export async function getReviewQueue(batchId?: string): Promise<QueueEntry[]> {
+  const rows =
+    batchId && isUuid(batchId)
+      ? await sql`
+          select c.id, c.status from candidates c join scores s on s.candidate_id = c.id
+          where c.batch_id = ${batchId}
+          order by s.total_100 desc, c.created_at desc`
+      : await sql`
+          select c.id, c.status from candidates c join scores s on s.candidate_id = c.id
+          order by (c.status = 'pending') desc, s.total_100 desc, c.created_at desc`
+  return rows.map((r) => ({ id: r.id as string, status: r.status as CandidateStatus }))
+}

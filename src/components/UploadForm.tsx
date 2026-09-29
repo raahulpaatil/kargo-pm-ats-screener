@@ -94,7 +94,7 @@ export function UploadForm() {
         onDrop={(e) => { e.preventDefault(); addFiles(e.dataTransfer.files) }}
         onDragOver={(e) => e.preventDefault()}
         onClick={() => inputRef.current?.click()}
-        className="border-2 border-dashed border-gray-300 rounded-xl2 p-12 text-center cursor-pointer bg-surface hover:border-accent transition"
+        className="border-2 border-dashed border-line rounded-xl2 p-12 text-center cursor-pointer bg-surface hover:border-accent transition"
       >
         <p className="text-ink font-medium mb-1">Drop resumes here or click to upload</p>
         <p className="text-subtle text-sm">PDF or DOCX, one or many</p>
@@ -111,7 +111,7 @@ export function UploadForm() {
       {files.length > 0 && (
         <div className="mt-6 space-y-2">
           {files.map((f, i) => (
-            <div key={i} className="flex items-center justify-between bg-surface shadow-soft rounded-lg px-4 py-3 text-sm">
+            <div key={i} className="flex items-center justify-between bg-surface shadow-soft border border-line rounded-lg px-4 py-3 text-sm">
               <span className="text-ink">{f.file.name}</span>
               {f.state === 'error' ? (
                 <button onClick={() => retryOne(f)} className="text-danger font-medium">
@@ -129,7 +129,7 @@ export function UploadForm() {
         <button
           onClick={handleStart}
           disabled={running}
-          className="mt-6 w-full bg-accent text-white rounded-lg py-3 font-medium hover:opacity-90 transition disabled:opacity-50"
+          className="mt-6 w-full bg-accent text-on-solid rounded-lg py-3 font-medium hover:opacity-90 transition disabled:opacity-50"
         >
           {running ? `Scoring ${doneCount}/${files.length}…` : `Score ${files.length} resume${files.length > 1 ? 's' : ''}`}
         </button>
@@ -144,7 +144,7 @@ export function UploadForm() {
       {canViewBatch && (
         <button
           onClick={() => router.push(`/batch/${batchId}`)}
-          className="mt-3 w-full border border-gray-300 text-ink rounded-lg py-3 font-medium hover:border-accent transition"
+          className="mt-3 w-full border border-line text-ink rounded-lg py-3 font-medium hover:border-accent transition"
         >
           View batch results ({doneCount}/{files.length} done)
         </button>

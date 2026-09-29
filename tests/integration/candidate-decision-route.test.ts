@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { NextRequest } from 'next/server'
 import { sql } from '@/lib/db'
-import { ResendSendError } from '@/lib/resend'
+import { MailSendError } from '@/lib/mailer'
 
-vi.mock('@/lib/resend', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/lib/resend')>()
+vi.mock('@/lib/mailer', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/mailer')>()
   return { ...actual, sendDecisionEmail: vi.fn() }
 })
 
-import { sendDecisionEmail } from '@/lib/resend'
+import { sendDecisionEmail } from '@/lib/mailer'
 import { POST } from '@/app/api/candidates/[id]/decision/route'
 
 const mockedSend = vi.mocked(sendDecisionEmail)
@@ -68,7 +68,7 @@ describe('POST /api/candidates/[id]/decision', () => {
 
   it('returns 502 and does not update status when the email fails to send', async () => {
     candidateId = await seedCandidate('jane@example.com')
-    mockedSend.mockRejectedValue(new ResendSendError('Invalid from address'))
+    mockedSend.mockRejectedValue(new MailSendError('Invalid from address'))
     const res = await POST(makeRequest('accepted'), { params: Promise.resolve({ id: candidateId }) })
     expect(res.status).toBe(502)
 
