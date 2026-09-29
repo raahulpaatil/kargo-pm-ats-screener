@@ -33,7 +33,7 @@ export function UploadForm() {
     try {
       setFiles((prev) => prev.map((f) => (f.file === entry.file ? { ...f, state: 'uploading' } : f)))
       const blob = await upload(entry.file.name, entry.file, {
-        access: 'public',
+        access: 'private',
         handleUploadUrl: '/api/blob-token',
       })
       setFiles((prev) => prev.map((f) => (f.file === entry.file ? { ...f, state: 'scoring' } : f)))

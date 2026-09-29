@@ -12,13 +12,19 @@ vi.mock('@/lib/gemini', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/gemini')>()
   return { ...actual, scoreResume: vi.fn() }
 })
+vi.mock('@vercel/blob', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vercel/blob')>()
+  return { ...actual, get: vi.fn() }
+})
 
 import { extractText } from '@/lib/extract-text'
 import { scoreResume } from '@/lib/gemini'
+import { get } from '@vercel/blob'
 import { POST } from '@/app/api/score/route'
 
 const mockedExtractText = vi.mocked(extractText)
 const mockedScoreResume = vi.mocked(scoreResume)
+const mockedGet = vi.mocked(get)
 
 function makeRequest(body: unknown) {
   return new NextRequest('http://localhost:3000/api/score', {
@@ -28,18 +34,34 @@ function makeRequest(body: unknown) {
   })
 }
 
-// The route downloads the resume via the global `fetch`, but Neon's HTTP driver
-// (used by `sql` for the real DB writes below) also goes through global `fetch`.
-// Fully replacing it would break DB access, so this mock only intercepts the
-// exact blob URL under test and passes every other call through to the real fetch.
-const realFetch = global.fetch
-function mockBlobDownload(blobUrl: string) {
-  return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-    if (input === blobUrl) {
-      return { ok: true, arrayBuffer: async () => new ArrayBuffer(8) } as unknown as Response
-    }
-    return realFetch(input, init)
-  }) as unknown as typeof fetch
+// The store is private-access-only, so the route reads the uploaded blob via
+// @vercel/blob's authenticated `get` rather than plain `fetch`. Mocking `get`
+// directly (instead of intercepting global fetch) also sidesteps any risk of
+// interfering with Neon's HTTP driver, which uses fetch for the real DB
+// writes below.
+function mockBlobGet() {
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new Uint8Array(8))
+      controller.close()
+    },
+  })
+  mockedGet.mockResolvedValue({
+    statusCode: 200,
+    stream,
+    headers: new Headers(),
+    blob: {
+      url: 'https://x/y.pdf',
+      downloadUrl: 'https://x/y.pdf',
+      pathname: 'y.pdf',
+      contentDisposition: 'inline',
+      cacheControl: 'public, max-age=0',
+      uploadedAt: new Date(),
+      etag: 'etag',
+      contentType: 'application/pdf',
+      size: 8,
+    },
+  })
 }
 
 const validGeminiResult = {
@@ -57,7 +79,6 @@ describe('POST /api/score', () => {
 
   afterEach(async () => {
     vi.restoreAllMocks()
-    global.fetch = realFetch
     if (insertedId) {
       await sql`delete from candidates where id = ${insertedId}`
       insertedId = undefined
@@ -81,7 +102,7 @@ describe('POST /api/score', () => {
   })
 
   it('returns 400 with a clear message on ExtractionError', async () => {
-    global.fetch = mockBlobDownload('https://x/y.pdf')
+    mockBlobGet()
     mockedExtractText.mockRejectedValue(new ExtractionError('scanned/image-only'))
     const res = await POST(makeRequest({ blobUrl: 'https://x/y.pdf', fileName: 'resume.pdf', role: 'PM' }))
     const json = await res.json()
@@ -90,7 +111,7 @@ describe('POST /api/score', () => {
   })
 
   it('returns 502 with a clear message on GeminiScoringError', async () => {
-    global.fetch = mockBlobDownload('https://x/y.pdf')
+    mockBlobGet()
     mockedExtractText.mockResolvedValue('extracted resume text')
     mockedScoreResume.mockRejectedValue(new GeminiScoringError('gave up after two tries'))
     const res = await POST(makeRequest({ blobUrl: 'https://x/y.pdf', fileName: 'resume.pdf', role: 'PM' }))
@@ -100,7 +121,7 @@ describe('POST /api/score', () => {
   })
 
   it('writes a candidate + score row and returns the combined result on success', async () => {
-    global.fetch = mockBlobDownload('https://x/y.pdf')
+    mockBlobGet()
     mockedExtractText.mockResolvedValue('extracted resume text')
     mockedScoreResume.mockResolvedValue(validGeminiResult)
 

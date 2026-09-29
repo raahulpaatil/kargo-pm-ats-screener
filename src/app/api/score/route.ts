@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { get } from '@vercel/blob'
 import { sql } from '@/lib/db'
 import { fileKindFromName, extractText, ExtractionError } from '@/lib/extract-text'
 import { scoreResume, GeminiScoringError } from '@/lib/gemini'
@@ -40,11 +41,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     )
   }
 
-  const fileRes = await fetch(body.blobUrl)
-  if (!fileRes.ok) {
+  const blobResult = await get(body.blobUrl, { access: 'private' })
+  if (!blobResult || blobResult.statusCode !== 200) {
     return NextResponse.json({ error: 'Could not download the uploaded file.' }, { status: 400 })
   }
-  const buffer = Buffer.from(await fileRes.arrayBuffer())
+  const buffer = Buffer.from(await new Response(blobResult.stream).arrayBuffer())
 
   let resumeText: string
   try {
