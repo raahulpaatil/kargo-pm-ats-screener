@@ -10,6 +10,21 @@ function mockClient(responses: (string | null)[]): GoogleGenAI {
   return { models: { generateContent } } as unknown as GoogleGenAI
 }
 
+// Like mockClient, but each step is either a resolved response text or a
+// rejection (simulating a network error / rate limit / 5xx from the SDK call
+// itself, as opposed to malformed JSON in a successful response).
+function mockClientWithSteps(steps: ({ text: string } | { reject: true })[]): GoogleGenAI {
+  const generateContent = vi.fn()
+  for (const step of steps) {
+    if ('reject' in step) {
+      generateContent.mockRejectedValueOnce(new Error('simulated Gemini API failure'))
+    } else {
+      generateContent.mockResolvedValueOnce({ text: step.text })
+    }
+  }
+  return { models: { generateContent } } as unknown as GoogleGenAI
+}
+
 const validJson = JSON.stringify({
   candidateName: 'Jane Doe',
   candidateEmail: 'jane@example.com',
@@ -45,6 +60,18 @@ describe('scoreResume', () => {
   it('throws GeminiScoringError if a score is out of range', async () => {
     const bad = JSON.stringify({ ...JSON.parse(validJson), metric1: { score: 9, rationale: 'x' } })
     const client = mockClient([bad, bad])
+    await expect(scoreResume('resume text', 'PM', client)).rejects.toThrow(GeminiScoringError)
+  })
+
+  it('retries once when the SDK call throws, then succeeds', async () => {
+    const client = mockClientWithSteps([{ reject: true }, { text: validJson }])
+    const result = await scoreResume('resume text', 'PM', client)
+    expect(result.metric4.score).toBe(3)
+    expect(client.models.generateContent).toHaveBeenCalledTimes(2)
+  })
+
+  it('throws GeminiScoringError after two consecutive thrown rejections', async () => {
+    const client = mockClientWithSteps([{ reject: true }, { reject: true }])
     await expect(scoreResume('resume text', 'PM', client)).rejects.toThrow(GeminiScoringError)
   })
 })

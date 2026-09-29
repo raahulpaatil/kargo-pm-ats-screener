@@ -56,17 +56,17 @@ function isValidResult(data: unknown): data is GeminiScoreResult {
 }
 
 async function callOnce(client: GoogleGenAI, prompt: string): Promise<GeminiScoreResult | null> {
-  const response = await client.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: RESPONSE_SCHEMA,
-    },
-  })
-  const text = response.text
-  if (!text) return null
   try {
+    const response = await client.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: RESPONSE_SCHEMA,
+      },
+    })
+    const text = response.text
+    if (!text) return null
     const data = JSON.parse(text)
     return isValidResult(data) ? data : null
   } catch {
