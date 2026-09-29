@@ -38,6 +38,11 @@ describe('candidates lib', () => {
     expect(result).toBeNull()
   })
 
+  it('getCandidateWithScore returns null for a malformed id instead of throwing', async () => {
+    const result = await getCandidateWithScore('not-a-uuid')
+    expect(result).toBeNull()
+  })
+
   it('updateCandidateStatus updates and returns true', async () => {
     candidateId = await seed()
     const ok = await updateCandidateStatus(candidateId, 'accepted')
@@ -48,6 +53,11 @@ describe('candidates lib', () => {
 
   it('updateCandidateStatus returns false for a missing id', async () => {
     const ok = await updateCandidateStatus('00000000-0000-0000-0000-000000000000', 'accepted')
+    expect(ok).toBe(false)
+  })
+
+  it('updateCandidateStatus returns false for a malformed id instead of throwing', async () => {
+    const ok = await updateCandidateStatus('not-a-uuid', 'accepted')
     expect(ok).toBe(false)
   })
 })

@@ -1,6 +1,12 @@
 import { sql } from '@/lib/db'
 import type { CandidateWithScore, CandidateStatus } from '@/lib/types'
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function isUuid(id: string): boolean {
+  return UUID_RE.test(id)
+}
+
 function mapRow(row: Record<string, unknown>): CandidateWithScore {
   return {
     id: row.id as string,
@@ -27,6 +33,7 @@ function mapRow(row: Record<string, unknown>): CandidateWithScore {
 }
 
 export async function getCandidateWithScore(id: string): Promise<CandidateWithScore | null> {
+  if (!isUuid(id)) return null
   const rows = await sql`
     select c.*, s.metric_1_score, s.metric_1_rationale, s.metric_2_score, s.metric_2_rationale,
            s.metric_3_score, s.metric_3_rationale, s.metric_4_score, s.metric_4_rationale,
@@ -40,6 +47,7 @@ export async function getCandidateWithScore(id: string): Promise<CandidateWithSc
 }
 
 export async function updateCandidateStatus(id: string, status: CandidateStatus): Promise<boolean> {
+  if (!isUuid(id)) return false
   const rows = await sql`update candidates set status = ${status} where id = ${id} returning id`
   return rows.length > 0
 }

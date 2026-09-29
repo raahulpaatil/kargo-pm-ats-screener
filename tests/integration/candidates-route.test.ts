@@ -33,6 +33,13 @@ describe('/api/candidates/[id]', () => {
     expect(res.status).toBe(404)
   })
 
+  it('GET returns 404 for a malformed id instead of a 500', async () => {
+    const res = await GET(new NextRequest('http://localhost:3000/api/candidates/not-a-uuid'), {
+      params: Promise.resolve({ id: 'not-a-uuid' }),
+    })
+    expect(res.status).toBe(404)
+  })
+
   it('GET returns the candidate with score', async () => {
     candidateId = await seed()
     const res = await GET(new NextRequest('http://localhost:3000/api/candidates/x'), {
@@ -63,5 +70,15 @@ describe('/api/candidates/[id]', () => {
     })
     const res = await PATCH(req, { params: Promise.resolve({ id: candidateId }) })
     expect(res.status).toBe(200)
+  })
+
+  it('PATCH returns 404 for a malformed id instead of a 500', async () => {
+    const req = new NextRequest('http://localhost:3000/api/candidates/not-a-uuid', {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'accepted' }),
+      headers: { 'content-type': 'application/json' },
+    })
+    const res = await PATCH(req, { params: Promise.resolve({ id: 'not-a-uuid' }) })
+    expect(res.status).toBe(404)
   })
 })
