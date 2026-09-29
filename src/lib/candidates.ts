@@ -51,3 +51,24 @@ export async function updateCandidateStatus(id: string, status: CandidateStatus)
   const rows = await sql`update candidates set status = ${status} where id = ${id} returning id`
   return rows.length > 0
 }
+
+export async function getBatchCandidates(
+  batchId: string
+): Promise<{ pm: CandidateWithScore[]; spm: CandidateWithScore[] }> {
+  if (!isUuid(batchId)) return { pm: [], spm: [] }
+  const rows = await sql`
+    select c.*, s.metric_1_score, s.metric_1_rationale, s.metric_2_score, s.metric_2_rationale,
+           s.metric_3_score, s.metric_3_rationale, s.metric_4_score, s.metric_4_rationale,
+           s.metric_5_score, s.metric_5_rationale, s.total_raw, s.total_100,
+           s.flag_hidden_fit, s.flag_spec_shallow
+    from candidates c
+    join scores s on s.candidate_id = c.id
+    where c.batch_id = ${batchId}
+    order by s.total_100 desc
+  `
+  const all = rows.map(mapRow)
+  return {
+    pm: all.filter((c) => c.role === 'PM'),
+    spm: all.filter((c) => c.role === 'SPM'),
+  }
+}
