@@ -52,6 +52,19 @@ export async function updateCandidateStatus(id: string, status: CandidateStatus)
   return rows.length > 0
 }
 
+export async function getAllCandidates(): Promise<CandidateWithScore[]> {
+  const rows = await sql`
+    select c.*, s.metric_1_score, s.metric_1_rationale, s.metric_2_score, s.metric_2_rationale,
+           s.metric_3_score, s.metric_3_rationale, s.metric_4_score, s.metric_4_rationale,
+           s.metric_5_score, s.metric_5_rationale, s.total_raw, s.total_100,
+           s.flag_hidden_fit, s.flag_spec_shallow
+    from candidates c
+    join scores s on s.candidate_id = c.id
+    order by c.created_at desc
+  `
+  return rows.map(mapRow)
+}
+
 export async function getBatchCandidates(
   batchId: string
 ): Promise<{ pm: CandidateWithScore[]; spm: CandidateWithScore[] }> {

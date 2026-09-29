@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import { sql } from '@/lib/db'
-import { getCandidateWithScore, updateCandidateStatus, getBatchCandidates } from '@/lib/candidates'
+import { getCandidateWithScore, updateCandidateStatus, getBatchCandidates, getAllCandidates } from '@/lib/candidates'
 
 describe('candidates lib', () => {
   let candidateId: string
@@ -94,5 +94,48 @@ describe('candidates lib', () => {
   it('getBatchCandidates returns empty pools for a malformed batchId instead of throwing', async () => {
     const result = await getBatchCandidates('not-a-uuid')
     expect(result).toEqual({ pm: [], spm: [] })
+  })
+
+  it('getAllCandidates includes every candidate, most recently created first', async () => {
+    const [older] = await sql`
+      insert into candidates (role, name, file_url, file_name, resume_text, created_at)
+      values ('PM', 'All-Candidates-Test-Older', 'https://x/f.pdf', 'f.pdf', 'text', now() - interval '1 hour')
+      returning id
+    `
+    await sql`
+      insert into scores (
+        candidate_id, metric_1_score, metric_1_rationale, metric_2_score, metric_2_rationale,
+        metric_3_score, metric_3_rationale, metric_4_score, metric_4_rationale,
+        metric_5_score, metric_5_rationale, total_raw, total_100, flag_hidden_fit, flag_spec_shallow
+      ) values (${older.id}, 2,'a',2,'b',2,'c',2,'d',2,'e',10,50,false,false)
+    `
+    const [newer] = await sql`
+      insert into candidates (role, name, file_url, file_name, resume_text)
+      values ('SPM', 'All-Candidates-Test-Newer', 'https://x/f.pdf', 'f.pdf', 'text')
+      returning id
+    `
+    await sql`
+      insert into scores (
+        candidate_id, metric_1_score, metric_1_rationale, metric_2_score, metric_2_rationale,
+        metric_3_score, metric_3_rationale, metric_4_score, metric_4_rationale,
+        metric_5_score, metric_5_rationale, total_raw, total_100, flag_hidden_fit, flag_spec_shallow
+      ) values (${newer.id}, 3,'a',3,'b',3,'c',3,'d',3,'e',15,75,false,false)
+    `
+
+    const all = await getAllCandidates()
+    const names = all.map((c) => c.name)
+    const olderIndex = names.indexOf('All-Candidates-Test-Older')
+    const newerIndex = names.indexOf('All-Candidates-Test-Newer')
+
+    expect(olderIndex).toBeGreaterThanOrEqual(0)
+    expect(newerIndex).toBeGreaterThanOrEqual(0)
+    expect(newerIndex).toBeLessThan(olderIndex)
+
+    const newerEntry = all.find((c) => c.name === 'All-Candidates-Test-Newer')
+    expect(newerEntry?.role).toBe('SPM')
+    expect(newerEntry?.score.total100).toBe(75)
+    expect(newerEntry?.status).toBe('pending')
+
+    await sql`delete from candidates where id in (${older.id}, ${newer.id})`
   })
 })

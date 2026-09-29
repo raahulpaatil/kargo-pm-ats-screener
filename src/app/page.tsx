@@ -1,8 +1,14 @@
+import Link from 'next/link'
 import { UploadForm } from '@/components/UploadForm'
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-canvas py-16 px-4">
+      <div className="max-w-xl mx-auto flex justify-end mb-4">
+        <Link href="/candidates" className="text-accent text-sm font-medium hover:underline">
+          View all candidates →
+        </Link>
+      </div>
       <h1 className="text-3xl font-semibold text-ink text-center mb-2">PM / SPM Resume Screener</h1>
       <p className="text-subtle text-center mb-10">Score candidates against Kargo&apos;s shortlisting rubric.</p>
       <UploadForm />
