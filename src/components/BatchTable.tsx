@@ -5,16 +5,16 @@ import { verdictFor, metricColor } from '@/lib/verdict'
 function Pool({ title, candidates, batchId }: { title: string; candidates: CandidateWithScore[]; batchId: string }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-semibold text-ink mb-3">{title} ({candidates.length})</h2>
-      <div className="bg-surface shadow-soft border border-line rounded-xl2 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-canvas text-subtle text-left">
+      <h2 className="text-2xl font-semibold text-ink text-glow mb-3">{title} <span className="pixel text-xl text-subtle">({candidates.length})</span></h2>
+      <div className="bg-surface/80 shadow-soft border border-line rounded-xl2 overflow-x-auto">
+        <table className="w-full text-[15px]">
+          <thead className="bg-canvas/80 text-subtle text-left pixel text-lg uppercase">
             <tr>
-              <th className="px-4 py-3 font-medium">Rank</th>
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Score</th>
-              <th className="px-4 py-3 font-medium">Metrics</th>
-              <th className="px-4 py-3 font-medium">Flags</th>
+              <th className="px-4 py-2 font-normal">Rank</th>
+              <th className="px-4 py-2 font-normal">Name</th>
+              <th className="px-4 py-2 font-normal">Score</th>
+              <th className="px-4 py-2 font-normal">Metrics</th>
+              <th className="px-4 py-2 font-normal">Flags</th>
             </tr>
           </thead>
           <tbody>

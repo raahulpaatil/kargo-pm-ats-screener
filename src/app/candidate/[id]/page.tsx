@@ -8,7 +8,7 @@ import { StatusButtons } from '@/components/StatusButtons'
 import { TopBar } from '@/components/TopBar'
 
 function NavArrow({ href, label, children }: { href: string | null; label: string; children: string }) {
-  const cls = 'w-9 h-9 rounded-full border border-line flex items-center justify-center text-lg'
+  const cls = 'w-10 h-10 rounded-md border border-line flex items-center justify-center text-xl'
   return href ? (
     <Link href={href} replace aria-label={label} className={`${cls} text-subtle hover:text-ink transition`}>
       {children}
@@ -40,22 +40,22 @@ export default async function CandidatePage({
   const verdict = verdictFor(score.total100, score.flagHiddenFit)
 
   return (
-    <main className="min-h-screen bg-canvas px-4 pt-6 pb-32 max-w-3xl mx-auto w-full">
+    <main id="main" className="min-h-svh px-5 sm:px-8 pt-6 sm:pt-8 pb-36 max-w-3xl mx-auto w-full">
       <TopBar>
         {index >= 0 && (
           <div className="flex items-center gap-2 mr-2">
             <NavArrow href={hrefFor(index - 1)} label="Previous candidate">‹</NavArrow>
-            <span className="text-subtle text-sm tabular-nums">{index + 1} of {queue.length}</span>
+            <span className="pixel text-lg text-subtle tabular-nums whitespace-nowrap">{index + 1} OF {queue.length}</span>
             <NavArrow href={hrefFor(index + 1)} label="Next candidate">›</NavArrow>
           </div>
         )}
       </TopBar>
 
-      <div className="bg-surface shadow-soft border border-line rounded-xl2 p-8 mb-6 flex flex-col items-center">
-        <h1 className="text-2xl font-semibold text-ink mb-1 text-center">{candidate.name || 'Unnamed Candidate'}</h1>
-        <p className="text-subtle mb-6">{candidate.role === 'PM' ? 'Product Manager' : 'Senior Product Manager'}</p>
+      <div className="bg-surface/80 shadow-soft border border-line rounded-xl2 p-8 mb-6 flex flex-col items-center">
+        <h1 className="text-4xl sm:text-5xl font-semibold text-ink text-glow mb-2 text-center">{candidate.name || 'Unnamed Candidate'}</h1>
+        <p className="pixel text-xl text-subtle mb-6 uppercase">{candidate.role === 'PM' ? 'Product Manager' : 'Senior Product Manager'}</p>
         <ScoreRing score={score.total100} verdict={verdict} />
-        <span className={`mt-5 text-sm font-semibold px-3 py-1 rounded-full ${verdict.soft}`}>{verdict.label}</span>
+        <span className={`pixel mt-5 text-xl px-3 py-0.5 rounded-sm uppercase ${verdict.soft}`}>[ {verdict.label} ]</span>
         {(score.flagHiddenFit || score.flagSpecShallow) && (
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {score.flagHiddenFit && (

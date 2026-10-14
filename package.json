@@ -12,6 +12,9 @@
   "dependencies": {
     "@google/genai": "^2.24.0",
     "@neondatabase/serverless": "^1.1.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "@react-three/postprocessing": "^3.2.0",
     "@vercel/blob": "^2.8.0",
     "dommatrix": "^0.1.1",
     "framer-motion": "^13.4.5",
@@ -19,8 +22,10 @@
     "next": "16.3.6",
     "nodemailer": "^10.0.12",
     "pdf-parse": "^2.4.5",
+    "postprocessing": "^6.39.5",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -28,6 +33,7 @@
     "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.1",
     "docx": "^9.8.1",
     "dotenv-cli": "^11.0.0",

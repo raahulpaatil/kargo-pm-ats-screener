@@ -1,51 +1,68 @@
 @config "../../tailwind.config.ts";
 @import "tailwindcss";
 
-/* Dark is the default. Light applies when the user picks it, or when the OS
-   prefers light and no explicit choice is stored (data-theme unset). */
+/* Retro CRT theme, reverse-engineered from 5aitec.com: near-black canvas,
+   warm cream phosphor ink, dusty maroon "boot screen" brand panel.
+   Dark is the default. Light ("paper") applies when the user picks it, or
+   when the OS prefers light and no explicit choice is stored. */
 :root {
-  --canvas: #0b0b0d;
-  --surface: #161618;
-  --line: #2a2a2e;
-  --ink: #f5f5f7;
-  --subtle: #a1a1a6;
-  --accent: #2997ff;
-  --good: #30d158;
-  --warn: #ff9f0a;
-  --danger: #ff453a;
-  --on-solid: #0b0b0d;
-  --shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --canvas: #060505;
+  --surface: #120e0d;
+  --line: #2f2624;
+  --ink: #fcf9f3;
+  --subtle: #b9aea4;
+  --accent: #f1d9b0;
+  --brand: #6b2f2a;
+  --brand-ink: #fcf9f3;
+  --good: #a6e3a1;
+  --warn: #f5b961;
+  --danger: #ff8a75;
+  --on-solid: #0b0807;
+  --glow: rgba(255, 236, 205, 0.55);
+  --shadow: 0 0 0 1px rgba(252, 249, 243, 0.04), 0 18px 60px rgba(0, 0, 0, 0.55);
+  --scanline: rgba(0, 0, 0, 0.28);
+  --fx-strength: 1;
   color-scheme: dark;
 }
 
 :root[data-theme='light'] {
-  --canvas: #f5f5f7;
-  --surface: #ffffff;
-  --line: #e5e5ea;
-  --ink: #1d1d1f;
-  --subtle: #6e6e73;
-  --accent: #0071e3;
-  --good: #1a8f3c;
-  --warn: #b25e00;
-  --danger: #d70015;
-  --on-solid: #ffffff;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --canvas: #efe7da;
+  --surface: #faf6ef;
+  --line: #d9cbb8;
+  --ink: #1d1513;
+  --subtle: #66574c;
+  --accent: #7a2e26;
+  --brand: #6b2f2a;
+  --brand-ink: #fcf9f3;
+  --good: #2c6e31;
+  --warn: #8a4f06;
+  --danger: #a8261c;
+  --on-solid: #fcf9f3;
+  --glow: rgba(122, 46, 38, 0.18);
+  --shadow: 0 0 0 1px rgba(29, 21, 19, 0.05), 0 12px 40px rgba(60, 30, 20, 0.12);
+  --scanline: rgba(60, 30, 20, 0.07);
+  --fx-strength: 0.45;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
-    --canvas: #f5f5f7;
-    --surface: #ffffff;
-    --line: #e5e5ea;
-    --ink: #1d1d1f;
-    --subtle: #6e6e73;
-    --accent: #0071e3;
-    --good: #1a8f3c;
-    --warn: #b25e00;
-    --danger: #d70015;
-    --on-solid: #ffffff;
-    --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    --canvas: #efe7da;
+    --surface: #faf6ef;
+    --line: #d9cbb8;
+    --ink: #1d1513;
+    --subtle: #66574c;
+    --accent: #7a2e26;
+    --brand: #6b2f2a;
+    --brand-ink: #fcf9f3;
+    --good: #2c6e31;
+    --warn: #8a4f06;
+    --danger: #a8261c;
+    --on-solid: #fcf9f3;
+    --glow: rgba(122, 46, 38, 0.18);
+    --shadow: 0 0 0 1px rgba(29, 21, 19, 0.05), 0 12px 40px rgba(60, 30, 20, 0.12);
+    --scanline: rgba(60, 30, 20, 0.07);
+    --fx-strength: 0.45;
     color-scheme: light;
   }
 }
@@ -57,11 +74,15 @@
   --color-ink: var(--ink);
   --color-subtle: var(--subtle);
   --color-accent: var(--accent);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
   --color-on-solid: var(--on-solid);
   --shadow-soft: var(--shadow);
+  --font-serif: var(--font-stix), 'Times New Roman', serif;
+  --font-pixel: var(--font-vt323), ui-monospace, monospace;
 }
 
 body {
@@ -72,4 +93,131 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-solid);
+}
+
+/* Warm phosphor glow used on display headings (5aitec hero treatment). */
+.text-glow {
+  text-shadow:
+    0 0 1px var(--glow),
+    0 0 12px var(--glow),
+    0 0 32px color-mix(in srgb, var(--glow) 50%, transparent);
+}
+
+/* DOS-style caption: pixel font, slight bloom. */
+.pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px color-mix(in srgb, var(--glow) 60%, transparent);
+}
+
+.blink {
+  animation: blink 1.05s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ── CRT layer ─────────────────────────────────────────────────────────── */
+
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    var(--scanline) 3px,
+    transparent 4px
+  );
+  opacity: var(--fx-strength);
+}
+
+.crt-grain {
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.95  0 0 0 0 0.88  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: calc(0.09 * var(--fx-strength));
+  animation: grain 0.6s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-6%, 4%); }
+  40% { transform: translate(5%, -7%); }
+  60% { transform: translate(-3%, 8%); }
+  80% { transform: translate(7%, 2%); }
+  100% { transform: translate(-4%, -5%); }
+}
+
+.crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, calc(0.55 * var(--fx-strength))) 100%);
+}
+
+/* Rounded CRT bezel: the page sits inside a curved monitor glass. */
+.crt-bezel {
+  border-radius: clamp(14px, 3vw, 34px);
+  box-shadow:
+    0 0 0 max(100vw, 100vh) #000,
+    inset 0 0 calc(80px * var(--fx-strength)) rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme='light'] .crt-bezel {
+  box-shadow:
+    0 0 0 max(100vw, 100vh) #1a1210,
+    inset 0 0 40px rgba(60, 30, 20, 0.18);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .crt-bezel {
+    box-shadow:
+      0 0 0 max(100vw, 100vh) #1a1210,
+      inset 0 0 40px rgba(60, 30, 20, 0.18);
+  }
+}
+
+.crt-flicker {
+  animation: flicker 6s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  47% { opacity: 1; }
+  48% { opacity: 0.94; }
+  49% { opacity: 1; }
+  82% { opacity: 0.97; }
+}
+
+/* CRT power-on: a bright line that opens vertically. */
+@keyframes crt-on {
+  0% { transform: scale(1, 0.004); filter: brightness(6); }
+  35% { transform: scale(1, 0.004); filter: brightness(4); }
+  70% { transform: scale(1, 1); filter: brightness(1.6); }
+  100% { transform: scale(1, 1); filter: brightness(1); }
+}
+
+@keyframes crt-off {
+  0% { transform: scale(1, 1); filter: brightness(1); opacity: 1; }
+  60% { transform: scale(1, 0.004); filter: brightness(5); opacity: 1; }
+  100% { transform: scale(0, 0.004); filter: brightness(8); opacity: 0; }
+}
+
+.crt-power-on {
+  animation: crt-on 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.crt-power-off {
+  animation: crt-off 0.45s cubic-bezier(0.6, 0, 0.8, 0.4) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-grain,
+  .crt-flicker,
+  .blink,
+  .crt-power-on,
+  .crt-power-off {
+    animation: none !important;
+  }
 }

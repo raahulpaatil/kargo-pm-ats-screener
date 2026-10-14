@@ -1,20 +1,24 @@
-import Link from 'next/link'
-import { UploadForm } from '@/components/UploadForm'
-import { TopBar } from '@/components/TopBar'
+export const dynamic = 'force-dynamic'
 
-export default function HomePage() {
-  return (
-    <main className="min-h-screen bg-canvas py-6 px-4">
-      <div className="max-w-xl mx-auto">
-        <TopBar close={false}>
-          <Link href="/candidates" className="text-accent text-sm font-medium hover:underline mr-2">
-            View all candidates →
-          </Link>
-        </TopBar>
-      </div>
-      <h1 className="text-3xl font-semibold text-ink text-center mb-2 mt-6">PM / SPM Resume Screener</h1>
-      <p className="text-subtle text-center mb-10">Score candidates against Kargo&apos;s shortlisting rubric.</p>
-      <UploadForm />
-    </main>
-  )
+import { getAllCandidates } from '@/lib/candidates'
+import { verdictFor } from '@/lib/verdict'
+import { HomeExperience } from '@/components/HomeExperience'
+import type { FilmFrame } from '@/components/scene/Filmstrip'
+
+export default async function HomePage() {
+  // The reel shows the most recently scored candidates.
+  const candidates = await getAllCandidates().catch(() => [])
+  const frames: FilmFrame[] = [...candidates]
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    .slice(0, 8)
+    .map((c) => ({
+      id: c.id,
+      name: c.name || 'Unnamed Candidate',
+      score: c.score.total100,
+      verdict: verdictFor(c.score.total100, c.score.flagHiddenFit).label,
+      role: c.role,
+      href: `/candidate/${c.id}`,
+    }))
+
+  return <HomeExperience frames={frames} />
 }

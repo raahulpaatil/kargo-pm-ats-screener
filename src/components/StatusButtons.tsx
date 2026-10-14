@@ -90,14 +90,14 @@ export function StatusButtons({
       <div className="fixed bottom-0 inset-x-0 z-40 bg-surface/90 backdrop-blur border-t border-line">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <div className="min-w-0 mr-auto flex items-center gap-2 text-sm">
-            <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${verdict.soft}`}>
+            <span className={`pixel shrink-0 text-lg px-2.5 py-0.5 rounded-sm uppercase ${verdict.soft}`}>
               Suggested: {verdict.label}
             </span>
-            <span className="text-subtle truncate hidden sm:inline">{STATUS_LABEL[status]}</span>
+            <span className="pixel text-lg text-subtle truncate hidden sm:inline uppercase">{STATUS_LABEL[status]}</span>
           </div>
           <button
             onClick={() => openPreview('rejected')}
-            className={`px-5 py-2.5 rounded-lg font-medium transition border ${
+            className={`px-5 py-2.5 rounded-md font-semibold transition-colors border cursor-pointer ${
               status === 'rejected'
                 ? 'bg-danger text-on-solid border-danger'
                 : 'border-danger/60 text-danger hover:bg-danger/10'
@@ -107,7 +107,7 @@ export function StatusButtons({
           </button>
           <button
             onClick={() => openPreview('accepted')}
-            className={`px-5 py-2.5 rounded-lg font-medium transition border ${
+            className={`px-5 py-2.5 rounded-md font-semibold transition-colors border cursor-pointer ${
               status === 'accepted'
                 ? 'bg-good text-on-solid border-good'
                 : 'bg-good text-on-solid border-good hover:opacity-90'
@@ -120,14 +120,14 @@ export function StatusButtons({
 
       {toast && (
         <div role="status" className="fixed bottom-24 inset-x-4 z-50 flex justify-center pointer-events-none">
-          <div className="bg-ink text-canvas text-sm font-medium px-4 py-3 rounded-xl shadow-lg">{toast}</div>
+          <div className="pixel bg-ink text-canvas text-lg px-4 py-2 rounded-md shadow-lg">{toast}</div>
         </div>
       )}
 
       {pendingDecision && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-surface border border-line rounded-xl2 shadow-soft max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold text-ink mb-1">
+            <h2 className="text-2xl font-semibold text-ink text-glow mb-1">
               {pendingDecision === 'accepted' ? 'Send acceptance email?' : 'Send rejection email?'}
             </h2>
             {!candidate.email ? (
@@ -137,7 +137,7 @@ export function StatusButtons({
             ) : (
               <>
                 <p className="text-subtle text-sm mb-4">Review before sending — this sends a real email from your Gmail.</p>
-                <div className="bg-canvas rounded-lg p-4 text-sm space-y-1 mb-4">
+                <div className="bg-canvas border border-line rounded-md p-4 text-sm space-y-1 mb-4">
                   <p><span className="text-subtle">To:</span> {preview?.to}</p>
                   <p><span className="text-subtle">Subject:</span> {preview?.subject}</p>
                   <pre className="whitespace-pre-wrap font-sans text-ink mt-2">{preview?.body}</pre>
@@ -149,14 +149,14 @@ export function StatusButtons({
               <button
                 onClick={() => setPendingDecision(null)}
                 disabled={sending}
-                className="px-4 py-2 rounded-lg font-medium bg-canvas text-ink border border-line hover:border-subtle transition"
+                className="px-4 py-2 rounded-md font-semibold cursor-pointer bg-canvas text-ink border border-line hover:border-subtle transition"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmSend}
                 disabled={sending || !candidate.email}
-                className="px-4 py-2 rounded-lg font-medium bg-accent text-on-solid hover:opacity-90 transition disabled:opacity-50"
+                className="px-4 py-2 rounded-md font-semibold cursor-pointer bg-accent text-on-solid hover:opacity-90 transition disabled:opacity-50"
               >
                 {sending ? 'Sending…' : error ? 'Retry send' : 'Send & Confirm'}
               </button>

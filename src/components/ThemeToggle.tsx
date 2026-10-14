@@ -1,23 +1,9 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
-
-type Theme = 'dark' | 'light'
-
-function readTheme(): Theme {
-  const explicit = document.documentElement.getAttribute('data-theme')
-  if (explicit === 'light' || explicit === 'dark') return explicit
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-}
-
-function subscribe(cb: () => void) {
-  const observer = new MutationObserver(cb)
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-  return () => observer.disconnect()
-}
+import { useTheme, type Theme } from '@/lib/theme'
 
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, readTheme, () => 'dark' as Theme)
+  const theme = useTheme()
 
   function toggle() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'
@@ -32,7 +18,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-      className="w-10 h-10 rounded-full bg-surface border border-line text-subtle hover:text-ink transition flex items-center justify-center"
+      className="w-10 h-10 rounded-md bg-surface/70 border border-line text-subtle hover:text-ink hover:border-accent transition-colors flex items-center justify-center cursor-pointer"
     >
       {theme === 'dark' ? (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

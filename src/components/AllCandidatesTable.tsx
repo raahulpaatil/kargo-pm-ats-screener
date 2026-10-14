@@ -49,7 +49,7 @@ export function AllCandidatesTable({ candidates }: { candidates: CandidateWithSc
         <select
           value={role}
           onChange={(e) => setRole(e.target.value as RoleFilter)}
-          className="bg-surface text-ink border border-line rounded-lg px-3 py-2 text-sm"
+          className="bg-surface text-ink border border-line rounded-md px-3 py-2 cursor-pointer hover:border-accent transition-colors"
         >
           <option value="ALL">All roles</option>
           <option value="PM">Product Manager</option>
@@ -58,18 +58,18 @@ export function AllCandidatesTable({ candidates }: { candidates: CandidateWithSc
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as StatusFilter)}
-          className="bg-surface text-ink border border-line rounded-lg px-3 py-2 text-sm"
+          className="bg-surface text-ink border border-line rounded-md px-3 py-2 cursor-pointer hover:border-accent transition-colors"
         >
           <option value="ALL">All statuses</option>
           <option value="pending">Pending</option>
           <option value="accepted">Accepted</option>
           <option value="rejected">Rejected</option>
         </select>
-        <span className="text-subtle text-sm self-center">{filtered.length} candidate{filtered.length === 1 ? '' : 's'}</span>
+        <span className="pixel text-lg text-subtle self-center">{filtered.length} candidate{filtered.length === 1 ? '' : 's'}</span>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="bg-surface shadow-soft border border-line rounded-xl2 p-10 text-center">
+        <div className="bg-surface/80 shadow-soft border border-line rounded-xl2 p-10 text-center">
           <p className="text-ink font-medium mb-1">
             {candidates.length === 0 ? 'No candidates yet' : 'Nothing matches these filters'}
           </p>
@@ -81,20 +81,20 @@ export function AllCandidatesTable({ candidates }: { candidates: CandidateWithSc
           )}
         </div>
       ) : (
-        <div className="bg-surface shadow-soft border border-line rounded-xl2 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-canvas text-subtle text-left">
+        <div className="bg-surface/80 shadow-soft border border-line rounded-xl2 overflow-x-auto">
+          <table className="w-full text-[15px]">
+            <thead className="bg-canvas/80 text-subtle text-left pixel text-lg uppercase">
               <tr>
-                <th className="px-4 py-3 font-medium">Name</th>
-                <th className="px-4 py-3 font-medium">Role</th>
-                <th className="px-4 py-3 font-medium">
-                  <button onClick={toggleScoreSort} className="font-medium hover:text-ink transition">
+                <th className="px-4 py-2 font-normal">Name</th>
+                <th className="px-4 py-2 font-normal">Role</th>
+                <th className="px-4 py-2 font-normal">
+                  <button onClick={toggleScoreSort} className="uppercase hover:text-ink transition-colors cursor-pointer">
                     Score {sort === 'score-desc' ? '↓' : sort === 'score-asc' ? '↑' : ''}
                   </button>
                 </th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Flags</th>
-                <th className="px-4 py-3 font-medium">Uploaded</th>
+                <th className="px-4 py-2 font-normal">Status</th>
+                <th className="px-4 py-2 font-normal">Flags</th>
+                <th className="px-4 py-2 font-normal">Uploaded</th>
               </tr>
             </thead>
             <tbody>

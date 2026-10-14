@@ -6,14 +6,15 @@ export type Verdict = {
   text: string
   soft: string
   stroke: string
+  fill: string
   solid: string
 }
 
 // Class names are spelled out in full so Tailwind can see them.
 const VERDICTS: Record<VerdictKey, Verdict> = {
-  shortlist: { key: 'shortlist', label: 'Shortlist', text: 'text-good', soft: 'bg-good/15 text-good', stroke: 'stroke-good', solid: 'bg-good' },
-  maybe: { key: 'maybe', label: 'Maybe', text: 'text-warn', soft: 'bg-warn/15 text-warn', stroke: 'stroke-warn', solid: 'bg-warn' },
-  pass: { key: 'pass', label: 'Pass', text: 'text-danger', soft: 'bg-danger/15 text-danger', stroke: 'stroke-danger', solid: 'bg-danger' },
+  shortlist: { key: 'shortlist', label: 'Shortlist', text: 'text-good', soft: 'bg-good/15 text-good', stroke: 'stroke-good', fill: 'fill-good text-good', solid: 'bg-good' },
+  maybe: { key: 'maybe', label: 'Maybe', text: 'text-warn', soft: 'bg-warn/15 text-warn', stroke: 'stroke-warn', fill: 'fill-warn text-warn', solid: 'bg-warn' },
+  pass: { key: 'pass', label: 'Pass', text: 'text-danger', soft: 'bg-danger/15 text-danger', stroke: 'stroke-danger', fill: 'fill-danger text-danger', solid: 'bg-danger' },
 }
 
 // Suggested triage bands for the 0-100 score. The rubric defines no cutoff, so

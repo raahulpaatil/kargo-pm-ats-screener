@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { upload } from '@vercel/blob/client'
 import { RoleToggle } from '@/components/RoleToggle'
 import { runWithConcurrency } from '@/lib/concurrency'
+import { setScreenState } from '@/lib/screen-state'
 import type { Role } from '@/lib/rubric'
 
 type FileStatus = {
@@ -82,10 +83,32 @@ export function UploadForm() {
 
   const doneCount = files.filter((f) => f.state === 'done').length
   const hasErrors = files.some((f) => f.state === 'error')
+  const failedCount = files.filter((f) => f.state === 'error').length
+
+  // Mirror progress onto the 3D monitor's terminal screen.
+  useEffect(() => {
+    const active = files.find((f) => f.state === 'uploading' || f.state === 'scoring')
+    setScreenState({
+      role,
+      total: files.length,
+      done: doneCount,
+      failed: failedCount,
+      current: active?.file.name,
+      mode: running
+        ? 'running'
+        : files.length === 0
+          ? 'idle'
+          : failedCount > 0
+            ? 'error'
+            : doneCount === files.length
+              ? 'done'
+              : 'queued',
+    })
+  }, [files, role, running, doneCount, failedCount])
   const canViewBatch = Boolean(batchId) && files.length > 1 && doneCount > 0 && !running
 
   return (
-    <div className="max-w-xl mx-auto">
+    <div className="w-full">
       <div className="mb-6 flex justify-center">
         <RoleToggle role={role} onChange={setRole} />
       </div>
@@ -94,10 +117,22 @@ export function UploadForm() {
         onDrop={(e) => { e.preventDefault(); addFiles(e.dataTransfer.files) }}
         onDragOver={(e) => e.preventDefault()}
         onClick={() => inputRef.current?.click()}
-        className="border-2 border-dashed border-line rounded-xl2 p-12 text-center cursor-pointer bg-surface hover:border-accent transition"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            inputRef.current?.click()
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Upload resumes: drop PDF or DOCX files here, or press Enter to browse"
+        className="group relative border-2 border-dashed border-line rounded-md px-6 py-12 text-center cursor-pointer bg-canvas/70 hover:border-accent focus-visible:border-accent transition-colors"
       >
-        <p className="text-ink font-medium mb-1">Drop resumes here or click to upload</p>
-        <p className="text-subtle text-sm">PDF or DOCX, one or many</p>
+        <p className="pixel text-2xl text-accent mb-2">
+          C:\&gt; INSERT RESUME<span className="blink" aria-hidden="true">_</span>
+        </p>
+        <p className="text-ink text-lg mb-1">Drop resumes here or click to upload</p>
+        <p className="text-subtle">PDF or DOCX, one or many</p>
         <input
           ref={inputRef}
           type="file"
@@ -111,14 +146,16 @@ export function UploadForm() {
       {files.length > 0 && (
         <div className="mt-6 space-y-2">
           {files.map((f, i) => (
-            <div key={i} className="flex items-center justify-between bg-surface shadow-soft border border-line rounded-lg px-4 py-3 text-sm">
-              <span className="text-ink">{f.file.name}</span>
+            <div key={i} className="flex items-center justify-between gap-3 bg-canvas/70 border border-line rounded-md px-4 py-3">
+              <span className="text-ink truncate min-w-0">{f.file.name}</span>
               {f.state === 'error' ? (
-                <button onClick={() => retryOne(f)} className="text-danger font-medium">
+                <button onClick={() => retryOne(f)} className="pixel text-lg text-danger shrink-0 cursor-pointer hover:underline">
                   {f.error} · Retry
                 </button>
               ) : (
-                <span className="text-subtle capitalize">{f.state}</span>
+                <span className={`pixel text-lg uppercase shrink-0 ${f.state === 'done' ? 'text-good' : 'text-subtle'}`}>
+                  {f.state === 'done' ? '[ OK ]' : f.state}
+                </span>
               )}
             </div>
           ))}
@@ -129,14 +166,14 @@ export function UploadForm() {
         <button
           onClick={handleStart}
           disabled={running}
-          className="mt-6 w-full bg-accent text-on-solid rounded-lg py-3 font-medium hover:opacity-90 transition disabled:opacity-50"
+          className="mt-6 w-full bg-ink text-canvas rounded-md py-3 text-lg font-semibold hover:bg-accent transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-default"
         >
           {running ? `Scoring ${doneCount}/${files.length}…` : `Score ${files.length} resume${files.length > 1 ? 's' : ''}`}
         </button>
       )}
 
       {!running && hasErrors && (
-        <p className="mt-3 text-center text-sm text-subtle">
+        <p role="status" className="mt-3 text-center text-sm text-subtle">
           Some files failed. Retry them above, or continue to the batch with the ones that succeeded.
         </p>
       )}
@@ -144,7 +181,7 @@ export function UploadForm() {
       {canViewBatch && (
         <button
           onClick={() => router.push(`/batch/${batchId}`)}
-          className="mt-3 w-full border border-line text-ink rounded-lg py-3 font-medium hover:border-accent transition"
+          className="mt-3 w-full border border-line text-ink rounded-md py-3 font-medium hover:border-accent transition-colors cursor-pointer"
         >
           View batch results ({doneCount}/{files.length} done)
         </button>
